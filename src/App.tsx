@@ -1,12 +1,18 @@
-import { Button } from './components/Button';
+import { Home } from './pages/Home';
+import { NewRoom } from './pages/NewRoom';
+
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+import './styles/global.scss'
 
 function App() {
   return (
-    <div>
-      <Button text="Me clique" />
-      <Button text="Ola">Gabriel</Button>
-      <h1>Hello World</h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/rooms/new" element={<NewRoom />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
