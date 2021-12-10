@@ -1,5 +1,6 @@
-import { FormEvent, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { FormEvent, useState } from 'react';
+import { useParams } from 'react-router-dom'
 
 import logoImg from '../assets/images/logo.svg';
 
@@ -12,31 +13,34 @@ import '../styles/room.scss';
 
 type FirebaseQuestions = Record<string, {
   author: {
-    name: string, 
+    name: string;
     avatar: string;
   }
   content: string;
-  isAsnwered: boolean;
+  isAnswered: boolean;
   isHighlighted: boolean;
 }>
 
 type Question = {
   id: string;
   author: {
-    name: string, 
+    name: string;
     avatar: string;
   }
   content: string;
-  isAsnwered: boolean;
+  isAnswered: boolean;
   isHighlighted: boolean;
 }
 
+
 export function Room() {
   const { user } = useAuth();
-  const { roomId } = useParams();
+  const { id } = useParams();
   const [newQuestion, setNewQuestion] = useState('');
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([])
   const [title, setTitle] = useState('');
+
+  const roomId = id;
 
   useEffect(() => {
     const roomRef = database.ref(`rooms/${roomId}`);
@@ -47,21 +51,20 @@ export function Room() {
 
       const parsedQuestions = Object.entries(firebaseQuestions).map(([key, value]) => {
         return {
-          id: key, 
-          content: value.content, 
-          author: value.author, 
+          id: key,
+          content: value.content,
+          author: value.author,
           isHighlighted: value.isHighlighted,
-          isAsnwered: value.isAsnwered
+          isAnswered: value.isAnswered,
         }
-      });
-    
+      })
+
       setTitle(databaseRoom.title);
       setQuestions(parsedQuestions);
-    
     })
   }, [roomId]);
 
-  async function hanldeSendQuestion(event: FormEvent) {
+  async function handleSendQuestion(event: FormEvent) {
     event.preventDefault();
 
     if (newQuestion.trim() === '') {
@@ -73,12 +76,12 @@ export function Room() {
     }
 
     const question = {
-      content: newQuestion, 
+      content: newQuestion,
       author: {
         name: user.name,
-        avatar: user.avatar
+        avatar: user.avatar,
       },
-      isHighLighted: false, 
+      isHighlighted: false,
       isAnswered: false
     };
 
@@ -92,19 +95,19 @@ export function Room() {
       <header>
         <div className="content">
           <img src={logoImg} alt="Letmeask" />
-          <RoomCode code={roomId}/>
+          <RoomCode code={roomId} />
         </div>
       </header>
 
       <main>
         <div className="room-title">
           <h1>Sala {title}</h1>
-          { questions.length > 0 && <span>{questions.length} pergunta(s)</span>}
+          { questions.length > 0 && <span>{questions.length} pergunta(s)</span> }
         </div>
 
-        <form onSubmit={hanldeSendQuestion}>
-          <textarea 
-            placeholder="O que você quer perguntar?" 
+        <form onSubmit={handleSendQuestion}>
+          <textarea
+            placeholder="O que você quer perguntar?"
             onChange={event => setNewQuestion(event.target.value)}
             value={newQuestion}
           />
@@ -116,12 +119,14 @@ export function Room() {
                 <span>{user.name}</span>
               </div>
             ) : (
-              <span>Para enviar uma pergunta, <button>faça seu login</button> .</span>
+              <span>Para enviar uma pergunta, <button>faça seu login</button>.</span>
             ) }
-            <Button type="submit" disabled={!user} >Enviar pergunta</Button>
+            <Button type="submit" disabled={!user}>Enviar pergunta</Button>
           </div>
         </form>
+
+        {JSON.stringify(questions)}
       </main>
     </div>
-  )
+  );
 }
