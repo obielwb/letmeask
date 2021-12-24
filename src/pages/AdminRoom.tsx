@@ -11,12 +11,22 @@ import { useRoom } from '../hooks/useRoom';
 import { database } from '../services/Firebase';
 
 import '../styles/room.scss';
+import { useHistory } from 'react-router-dom';
 
 export function AdminRoom() {
+  const history = useHistory();
   const { id } = useParams();
   const roomId = id;
 
   const { title, questions } =  useRoom(roomId || '');
+
+  async function handleEndRoom() {
+    await database.ref(`rooms/${roomId}/`).update({
+      endedAt: new Date()
+    });
+
+    history.push()
+  }
 
   async function handleDeleteQuestion(questionId: string) {
     if(window.confirm('Voce tem certeza que deseja excluir essa pergunta?')){
@@ -31,7 +41,7 @@ export function AdminRoom() {
           <img src={logoImg} alt="Letmeask" />
           <div>
             <RoomCode code={roomId} />
-            <Button isOutlined>Encerrar sala</Button>
+            <Button isOutlined onClick={handleEndRoom}>Encerrar sala</Button>
           </div>
         </div>
       </header>
